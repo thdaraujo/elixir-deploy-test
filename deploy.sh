@@ -34,10 +34,18 @@ scp "${ARTIFACT}" "${HOST}:${REMOTE_FILE_PATH}"
 
 echo "File ${HOST}:${REMOTE_FILE_PATH} created."
 
-# TODO refactor
-ssh -T "${HOST}" "cd /home/${USER}/opt/app/${APP_NAME} ; ./bin/${APP_NAME} stop || true ; "
-ssh -T "${HOST}" "cd /home/${USER}/opt/app/${APP_NAME} ; rm -rf bin && rm -rf erts-9.3 && rm -rf lib && rm -rf releases && rm -rf var; "
-ssh -T "${HOST}" "cd /home/${USER}/opt/app/ ; tar -xf ${REMOTE_FILE_PATH} -C ${APP_NAME}/ ; "
-ssh -T "${HOST}" "cd /home/${USER}/opt/app/${APP_NAME} ; ./bin/${APP_NAME} start && ./bin/${APP_NAME} ping ; "
+ssh -T "${HOST}" << EOSSH
+  cd /home/${USER}/opt/app/${APP_NAME} && \
+  ./bin/${APP_NAME} stop || true  && \
+  rm -rf bin && rm -rf erts-9.3 && rm -rf lib && rm -rf releases && rm -rf var  && \
+  cd /home/${USER}/opt/app/ && tar -xf ${REMOTE_FILE_PATH} -C ${APP_NAME}/ && \
+  cd /home/${USER}/opt/app/${APP_NAME} && ./bin/${APP_NAME} start && sleep 10 && ./bin/${APP_NAME} ping && \
+  exit 0
+EOSSH
+
+if [[ $? = 1 ]]; then
+   echo "Remote call failed. Try again."
+   exit 1
+fi
 
 echo "Deployed!"
