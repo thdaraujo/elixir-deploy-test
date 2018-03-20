@@ -3,7 +3,7 @@ set -o errexit
 set -o nounset
 
 USER="ubuntu"
-SERVER="18.188.93.87"
+SERVER="18.222.90.201"
 HOST="${USER}@${SERVER}"
 
 VERSION=$(grep version mix.exs | sed 's/^.*version: "//' | sed 's/",//')
