@@ -28,15 +28,15 @@ fi
 
 echo "Deploying ${APP_NAME} ${VERSION} to ${HOST}"
 
-scp "${ARTIFACT}" "${HOST}:${REMOTE_FILE_PATH}"
+scp -i ~/.ssh/lightsail_deploy_rsa "${ARTIFACT}" "${HOST}:${REMOTE_FILE_PATH}"
 
 echo "File ${HOST}:${REMOTE_FILE_PATH} created."
 
 # TODO refactor
-ssh -T "${HOST}" "cd /home/${USER}/opt/app/${APP_NAME} ; ./bin/${APP_NAME} stop ; "
-ssh -T "${HOST}" "cd /home/${USER}/opt/app/${APP_NAME} ; rm -rf bin && rm -rf erts-9.3 && rm -rf lib && rm -rf releases && rm -rf var; "
-ssh -T "${HOST}" "cd /home/${USER}/opt/app/ ; tar -xf ${REMOTE_FILE_PATH} -C ${APP_NAME}/ ; "
-ssh -T "${HOST}" "cd /home/${USER}/opt/app/${APP_NAME} ; ./bin/${APP_NAME} start ; ./bin/${APP_NAME} ping ; "
+ssh -i ~/.ssh/lightsail_deploy_rsa -T "${HOST}" "cd /home/${USER}/opt/app/${APP_NAME} ; ./bin/${APP_NAME} stop ; "
+ssh -i ~/.ssh/lightsail_deploy_rsa -T "${HOST}" "cd /home/${USER}/opt/app/${APP_NAME} ; rm -rf bin && rm -rf erts-9.3 && rm -rf lib && rm -rf releases && rm -rf var; "
+ssh -i ~/.ssh/lightsail_deploy_rsa -T "${HOST}" "cd /home/${USER}/opt/app/ ; tar -xf ${REMOTE_FILE_PATH} -C ${APP_NAME}/ ; "
+ssh -i ~/.ssh/lightsail_deploy_rsa -T "${HOST}" "cd /home/${USER}/opt/app/${APP_NAME} ; ./bin/${APP_NAME} start ; ./bin/${APP_NAME} ping ; "
 
 #
 # ssh -T $user@$server << EOSSH
