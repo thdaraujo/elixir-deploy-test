@@ -8,14 +8,41 @@ the production server.
 
 ## How to build
 
-`$ docker build -t refuel:latest . `
+Add permission:
+`$ sudo chmod +x build.sh`
 
-## How to run
+Then run:
+`$ ./build.sh`
 
-`$ docker run --name refuel -it -p 4000:4000 refuel:latest`
+## How to run production container on docker
+
+Add permission:
+`$ sudo chmod +x run.sh`
+
+Then run:
+`$ ./run.sh`
 
 Then open browser on [localhost:4000](localhost:4000).
 
+## How to stop
+
+Add permission:
+`$ sudo chmod +x stop.sh `
+
+Then run:
+`$ ./stop.sh `
+
+
 ## How to connect to remote_console
 
-`$ docker exec -it refuel /opt/app/bin/refuel remote_console`
+`$ docker exec -it refuel-run /opt/app/bin/refuel remote_console`
+
+## How to deploy (manually)
+
+Add permission:
+`$ sudo chmod +x deploy.sh`
+
+Then run:
+`$ ./deploy.sh`
+
+Project will be deployed automatically by a CI.

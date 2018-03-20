@@ -34,8 +34,9 @@ environment :dev do
 end
 
 environment :prod do
-  set include_erts: true
+  set include_erts: true # true
   set include_src: false
+  set include_system_libs: false
   set cookie: :"ihYw$*,piw`U>Pc^P`L4ghX<z@n9K637~K%)UaqfEYNCY|J?Y*.XPep&1@pl)m;%"
 end
 
@@ -45,7 +46,7 @@ end
 # will be used by default
 
 release :refuel do
-  set version: "0.0.1" # current_version(:api)
+  set version: Application.spec(:refuel, :vsn) || "0.1.0"
   set applications: [
     :runtime_tools,
     api: :permanent

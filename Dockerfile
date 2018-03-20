@@ -1,41 +1,38 @@
-#===========
-#Build Stage
-#===========
-FROM bitwalker/alpine-elixir:1.5 as build
+FROM ubuntu:16.04
 
-# Copy the source folder into the Docker image
-COPY . .
-
-# Install dependencies, digest, and build Release
-ENV MIX_ENV=prod
-
-RUN rm -Rf _build && \
-    mix do deps.get, deps.compile, phx.digest
-
-RUN mix release
-
-# Extract Release archive to /rel for copying in next stage
-RUN APP_NAME="refuel" && \
-    RELEASE_DIR=`ls -d _build/prod/rel/$APP_NAME/releases/*/` && \
-    mkdir /export && \
-    tar -xf "$RELEASE_DIR/$APP_NAME.tar.gz" -C /export
-
-#================
-# Deployment Stage
-#================
-FROM pentacent/alpine-erlang-base:latest
-
-# Set environment variables and expose port
-EXPOSE 4000
 ENV REPLACE_OS_VARS=true \
-    PORT=4000
+    MIX_ENV=prod \
+    APP_NAME=refuel \
+    APP_VERSION=0.1.0 \
+    TERM=xterm \
+    LANG=en_US.UTF-8 \
+    LC_ALL=en_US.UTF-8
 
-# Copy and extract .tar.gz Release file from the previous stage
-COPY --from=build /export/ .
+RUN \
+    apt-get update && \
+    apt-get install -y locales wget && \
+    locale-gen en_US.UTF-8 && \
+    update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 && \
+    wget https://packages.erlang-solutions.com/erlang-solutions_1.0_all.deb && \
+    dpkg -i erlang-solutions_1.0_all.deb && \
+    apt-get update && \
+    apt-get install -y erlang-dev erlang-parsetools elixir && \
+    mix local.hex --force && \
+    mix local.rebar --force
 
-# Change user
-USER default
+WORKDIR /opt/build
 
-# Set default entrypoint and command
+COPY mix.exs mix.lock ./
+RUN mix do deps.get, deps.compile
+
+COPY . .
+RUN \
+   mkdir -p /opt/app/log && \
+   mix do compile, release --verbose --env=prod && \
+   cp _build/prod/rel/$APP_NAME/releases/$APP_VERSION/$APP_NAME.tar.gz /opt/app/$APP_NAME.tar.gz && \
+   cd /opt/app && \
+   tar -xzf $APP_NAME.tar.gz && \
+   chmod -R 777 /opt/app
+
 ENTRYPOINT ["/opt/app/bin/refuel"]
 CMD ["foreground"]

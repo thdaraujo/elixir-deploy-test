@@ -5,6 +5,8 @@ defmodule Refuel.MixProject do
     [
       apps_path: "apps",
       start_permanent: Mix.env() == :prod,
+      app: :refuel,
+      version: "0.1.0",
       deps: deps()
     ]
   end
@@ -16,7 +18,7 @@ defmodule Refuel.MixProject do
   # Run "mix help deps" for examples and options.
   defp deps do
     [
-      {:distillery, "1.5.2", runtime: false}
+      {:distillery, "~> 1.5", runtime: false}
     ]
   end
 end
