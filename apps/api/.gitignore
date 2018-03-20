@@ -13,7 +13,7 @@ erl_crash.dump
 # Alternatively, you may comment the line below and commit the
 # secrets files as long as you replace their contents by environment
 # variables.
-/config/*.secret.exs
+# /config/*.secret.exs
 
 # Since we are building js and css from web/static,
 # we ignore priv/static/{css,js}. You may want to
