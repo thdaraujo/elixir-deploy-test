@@ -5,6 +5,8 @@ set -o nounset
 APP_NAME=$(grep app: mix.exs | sed 's/^.*app: ://' | sed 's/,//')
 RELEASE_DIR="export"
 
+mkdir -p "${RELEASE_DIR}"
+
 # Remove old releases
 rm -rf _build/prod/rel/*
 rm -rf "${RELEASE_DIR}/*"
